@@ -1,0 +1,85 @@
+
+//FUNCTION getComputerChoice
+
+FUNCTION getComputerChoice
+  SET value TO random number between 0 and 1
+
+  IF value < 0.33
+      RETURN "rock"
+  ELSE IF value < 0.66
+      RETURN "paper"
+  ELSE
+      RETURN "scissors"
+END FUNCTION
+ 
+//FUNCTION getHumanChoice
+FUNCTION getHumanChoice
+  SET input TO prompt user for "Enter rock, paper, or scissors:"
+  CONVERT input TO lowercase
+  RETURN input
+END FUNCTION
+
+
+//Global Scores
+
+SET humanScore = 0
+SET computerScore = 0
+
+
+//FUNCTION playRound(humanChoice, computerChoice)
+
+FUNCTION playRound humanChoice, computerChoice
+
+  IF humanChoice == computerChoice
+      PRINT "It is a tie!"
+
+  ELSE IF humanChoice == "rock" AND computerChoice == "scissors"
+      PRINT "You win! Rock beats Scissors"
+      INCREMENT humanScore BY 1
+
+  ELSE IF humanChoice == "rock" AND computerChoice == "paper"
+      PRINT "You lose! Paper beats Rock"
+      INCREMENT computerScore BY 1
+
+  ELSE IF humanChoice == "paper" AND computerChoice == "rock"
+      PRINT "You win! Paper beats Rock"
+      INCREMENT humanScore BY 1
+
+  ELSE IF humanChoice == "paper" AND computerChoice == "scissors"
+      PRINT "You lose! Scissors beats Paper"
+      INCREMENT computerScore BY 1
+
+  ELSE IF humanChoice == "scissors" AND computerChoice == "paper"
+      PRINT "You win! Scissors beats Paper"
+      INCREMENT humanScore BY 1
+
+  ELSE IF humanChoice == "scissors" AND computerChoice == "rock"
+      PRINT "You lose! Rock beats Scissors"
+      INCREMENT computerScore BY 1
+
+  ELSE
+      PRINT "Invalid choice!"
+END FUNCTION
+
+
+
+
+//Step 6: Write the logic to play the entire game
+
+FUNCTION playGame
+  SET humanScore = 0
+  SET computerScore = 0
+
+  LOOP 5 times
+      SET humanChoice = getHumanChoice()
+      SET computerChoice = getComputerChoice()
+      CALL playRound(humanChoice, computerChoice)
+  END LOOP
+
+  IF humanScore > computerScore
+      PRINT "You won the game!"
+  ELSE IF humanScore < computerScore
+      PRINT "You lost the game. Better luck next time!"
+  ELSE
+      PRINT "The game is a tie!"
+END FUNCTION
