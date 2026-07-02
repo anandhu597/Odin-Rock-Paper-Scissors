@@ -1,9 +1,9 @@
-//____________Global variables_________________
+// ____________Global variables_________________
 
 let humanScore = 0;
 let computerScore = 0;
 
-//____________Game logic functions_________________
+// ____________Game logic functions_________________
 
 function getComputerChoice() {
   const value = Math.random();
@@ -13,15 +13,9 @@ function getComputerChoice() {
 }
 
 function playRound(humanChoice, computerChoice) {
-  // if (!humanChoice) {
-  //   return "No input provided";
-  // }
-
   humanChoice = humanChoice.toLowerCase().trim();
 
-  if (humanChoice === computerChoice) {
-    return "It's a tie!";
-  }
+  if (humanChoice === computerChoice) return "It's a tie!";
 
   if (humanChoice === "rock" && computerChoice === "scissors") {
     humanScore++;
@@ -31,7 +25,6 @@ function playRound(humanChoice, computerChoice) {
     computerScore++;
     return "You lose! Paper beats Rock";
   }
-
   if (humanChoice === "paper" && computerChoice === "rock") {
     humanScore++;
     return "You win! Paper beats Rock";
@@ -40,7 +33,6 @@ function playRound(humanChoice, computerChoice) {
     computerScore++;
     return "You lose! Scissors beats Paper";
   }
-
   if (humanChoice === "scissors" && computerChoice === "rock") {
     computerScore++;
     return "You lose! Rock beats Scissors";
@@ -53,13 +45,26 @@ function playRound(humanChoice, computerChoice) {
   return "Invalid choice, please enter rock, paper, or scissors";
 }
 
-//____________UI creation_________________
+// ____________UI creation_________________
 
-//Create buttons
+// Container
+const container = document.createElement("div");
+container.id = "container";
+document.body.appendChild(container);
 
+// Title
+const title = document.createElement("h1");
+title.textContent = "Rock Paper Scissors";
+title.id = "title";
+container.appendChild(title);
+
+// Choice buttons
 const btnDiv = document.createElement("div");
+btnDiv.id = "btnDiv";
+
 const rBtn = document.createElement("button");
 rBtn.textContent = "Rock";
+
 const pBtn = document.createElement("button");
 pBtn.textContent = "Paper";
 
@@ -69,114 +74,121 @@ sBtn.textContent = "Scissors";
 btnDiv.appendChild(rBtn);
 btnDiv.appendChild(pBtn);
 btnDiv.appendChild(sBtn);
+container.appendChild(btnDiv);
 
-document.body.appendChild(btnDiv);
+// New game button (hidden until game over)
+const newGame = document.createElement("button");
+newGame.textContent = "NEW GAME";
+newGame.id = "newGame";
 
-// Create choice display
+// Choice display
 const choiceDive = document.createElement("div");
-const choices = document.createElement("p");
-const currentWin = document.createElement("p");
+choiceDive.id = "choiceDive";
 
+const choices = document.createElement("p");
+choices.id = "choices";
+
+const currentWin = document.createElement("p");
+currentWin.id = "currentWin";
 currentWin.textContent = "PLAY NOW";
 
 choiceDive.appendChild(choices);
 choiceDive.appendChild(currentWin);
-document.body.appendChild(choiceDive);
+container.appendChild(choiceDive);
 
-// Create score display
-
+// Score display
 const resultDiv = document.createElement("div");
+resultDiv.id = "resultDiv";
 
 const humanScorePara = document.createElement("p");
-humanScorePara.textContent = "Human Score :" + humanScore;
+humanScorePara.id = "humanScorePara";
+humanScorePara.textContent = "Human Score : " + humanScore;
 resultDiv.appendChild(humanScorePara);
 
 const computerScorePara = document.createElement("p");
-computerScorePara.textContent = "Computer Score :" + computerScore;
+computerScorePara.id = "computerScorePara";
+computerScorePara.textContent = "Computer Score : " + computerScore;
 resultDiv.appendChild(computerScorePara);
 
-document.body.appendChild(resultDiv);
+container.appendChild(resultDiv);
 
-// new game button
-const newGame = document.createElement("button");
-newGame.innerText = "NEW GAME";
+// ____________Event listeners_________________
 
-//____________Event listeners_________________
+rBtn.addEventListener("click", () => handleChoice("rock"));
+pBtn.addEventListener("click", () => handleChoice("paper"));
+sBtn.addEventListener("click", () => handleChoice("scissors"));
+newGame.addEventListener("click", playGame);
 
-rBtn.addEventListener("click", rockClicked);
-pBtn.addEventListener("click", paperClicked);
-sBtn.addEventListener("click", scissorsClicked);
+// ____________Helper functions_________________
 
-//____________Helper functions_________________
-
-function rockClicked() {
-  const humanChoice = "rock";
+// Single handler for all three buttons
+function handleChoice(humanChoice) {
   const computerChoice = getComputerChoice();
-  let result = playRound(humanChoice, computerChoice);
+  const result = playRound(humanChoice, computerChoice);
   updateChoiceDisplay(humanChoice, computerChoice, result);
 }
 
-function paperClicked() {
-  const humanChoice = "paper";
-  const computerChoice = getComputerChoice();
-  let result = playRound(humanChoice, computerChoice);
-  updateChoiceDisplay(humanChoice, computerChoice, result);
-}
-
-function scissorsClicked() {
-  const humanChoice = "scissors";
-  const computerChoice = getComputerChoice();
-  let result = playRound(humanChoice, computerChoice);
-  updateChoiceDisplay(humanChoice, computerChoice, result);
-}
-
-// Update choice display
-
+// Update the choice and result text
 function updateChoiceDisplay(humanChoice, computerChoice, result) {
   choices.textContent =
-    "Human: " + humanChoice + " |" + "  Computer: " + computerChoice;
+    "Human : " + humanChoice + "  |  Computer : " + computerChoice;
   currentWin.textContent = result;
-  updateTheScoreDisplay();
-}
 
-// Update score display
+  // Color feedback based on result
+  if (result.includes("win")) {
+    currentWin.style.color = "#4caf50"; // green
+  } else if (result.includes("lose")) {
+    currentWin.style.color = "#e74c3c"; // red
+  } else {
+    currentWin.style.color = "white"; // tie
+  }
 
-function updateTheScoreDisplay() {
-  humanScorePara.textContent = "Human Score :" + humanScore;
-  computerScorePara.textContent = "Computer Score :" + computerScore;
+  updateScoreDisplay();
   checkIfGameOver();
 }
-// Check if game is over
+
+// Refresh score paragraphs
+function updateScoreDisplay() {
+  humanScorePara.textContent = "Human Score : " + humanScore;
+  computerScorePara.textContent = "Computer Score : " + computerScore;
+}
+
+// Check if either player has reached 5 points
 function checkIfGameOver() {
   if (humanScore >= 5) {
+    choices.classList.add("gameOver");
     choices.textContent = "GAME OVER";
-    currentWin.textContent = "Human Own The game ";
-    removeEvents();
+    currentWin.textContent = "Human Wins the Game";
+    endGame();
   } else if (computerScore >= 5) {
+    choices.classList.add("gameOver");
     choices.textContent = "GAME OVER";
-    currentWin.textContent = "Computer Own The game ";
-    removeEvents();
+    currentWin.textContent = "Computer Wins the Game";
+    endGame();
   }
 }
 
-function removeEvents() {
-  rBtn.removeEventListener("click", rockClicked);
-  pBtn.removeEventListener("click", paperClicked);
-  sBtn.removeEventListener("click", scissorsClicked);
-  playNewGame();
+// Hide buttons and show new game option
+function endGame() {
+  container.removeChild(btnDiv);
+  container.insertBefore(newGame, choiceDive);
 }
 
-function playNewGame() {
-  newGame.addEventListener("click", playGame);
-
-  document.body.appendChild(newGame);
-}
-//____________Start the game_________________
+// ____________Start / Restart the game_________________
 
 function playGame() {
+  // Restore buttons, remove new game button
+  container.insertBefore(btnDiv, choiceDive);
+  container.removeChild(newGame);
+
+  // Reset scores
   humanScore = 0;
   computerScore = 0;
-  updateChoiceDisplay();
-  currentWin.textContent = "PLAY NOW";
+
+  // Reset display
   choices.textContent = "";
+  choices.classList.remove("gameOver");
+  currentWin.textContent = "PLAY NOW";
+  currentWin.style.color = "white";
+  updateScoreDisplay();
 }
